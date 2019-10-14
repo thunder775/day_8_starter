@@ -1,32 +1,44 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:day_8_starter/Reusable_card.dart';
+import 'package:day_8_starter/Round_button.dart';
+
+import 'Result_Page.dart';
 
 class InputPage extends StatefulWidget {
   @override
   _InputPageState createState() => _InputPageState();
 }
 
+const TextStyle kTextTextStyle = TextStyle(fontSize: 24, color: Colors.white30);
+const TextStyle kNumberTextStyle =
+    TextStyle(fontSize: 45, color: Colors.white, fontWeight: FontWeight.bold);
 enum Gender { male, female }
 
 class _InputPageState extends State<InputPage> {
+  int weight = 40;
+  int age = 0;
+
   Gender gender;
   Color inactive = Color(0xFF111328);
   Color active = Color(0xFF1D1F31);
   Color activeText = Colors.white;
   Color inactiveText = Colors.white30;
-  double current = 110;
+  double height = 110;
+  double bmi;
 
   void sliderFunction(double x) {
     setState(() {
-      current = x;
+      height = x;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    bmi = weight / ((height * height) / 10000);
 
+    return Scaffold(
       appBar: AppBar(
         title: Text('BMI CALCULATOR'),
         centerTitle: true,
@@ -116,40 +128,53 @@ class _InputPageState extends State<InputPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Center(
-                        child: Text(
-                      'HEIGHT',
-                      style: TextStyle(color: Colors.white70, fontSize: 24),
-                    )),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: <Widget>[
-                        Text(
-                          '${current.round()}',
-                          style: TextStyle(
-                              fontSize: 45,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'cm',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white70,
-                          ),
-                        )
-                      ],
+                    Expanded(
+                      child: Center(
+                          child: Text(
+                        'HEIGHT',
+                        style: TextStyle(fontSize: 24, color: inactiveText),
+                      )),
                     ),
-                    Slider(
-                      activeColor: Colors.white,
-                      inactiveColor: Colors.white30,
-                      min: 110,
-                      max: 250,
-                      value: current,
-                      onChanged: sliderFunction,
-
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: <Widget>[
+                          Text(
+                            '${height.round()}',
+                            style: TextStyle(
+                                fontSize: 45,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            'cm',
+                            style: kTextTextStyle,
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          activeTrackColor: Colors.white,
+                          inactiveTrackColor: Colors.white30,
+                          trackHeight: 3.0,
+                          thumbColor: Color(0xFFD93559),
+                          thumbShape:
+                              RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                          overlayColor: Colors.pinkAccent.withAlpha(32),
+                          overlayShape:
+                              RoundSliderOverlayShape(overlayRadius: 24.0),
+                        ),
+                        child: Slider(
+                          min: 110,
+                          max: 250,
+                          value: height,
+                          onChanged: sliderFunction,
+                        ),
+                      ),
                     )
                   ],
                 ),
@@ -160,41 +185,103 @@ class _InputPageState extends State<InputPage> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: ReusableCard(),
+                  child: ReusableCard(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'WEIGHT',
+                          style: kTextTextStyle,
+                        ),
+                        Text(
+                          '$weight',
+                          style: kNumberTextStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Roundbutton(
+                              icon: Icon(Icons.remove),
+                              onPressed: () {
+                                setState(() {
+                                  weight--;
+                                });
+                              },
+                            ),
+                            Roundbutton(
+                              icon: Icon(Icons.add),
+                              onPressed: () {
+                                setState(() {
+                                  weight++;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 Expanded(
-                  child: ReusableCard(),
+                  child: ReusableCard(
+                      child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'AGE',
+                        style: kTextTextStyle,
+                      ),
+                      Text(
+                        '$age',
+                        style: kNumberTextStyle,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Roundbutton(
+                            icon: Icon(Icons.remove),
+                            onPressed: () {
+                              setState(() {
+                                age--;
+                              });
+                            },
+                          ),
+                          Roundbutton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {
+                              setState(() {
+                                age++;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
                 )
               ],
             ),
           ),
+          Container(
+            width: double.infinity,
+            height: 50,
+            child: FlatButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ResultPage(
+                              bmi: bmi,
+                            )));
+              },
+              child: Text(
+                'Calculate Your BMI',
+                style: TextStyle(fontSize: 18),
+              ),
+              color: Color(0xFFD93559),
+            ),
+          )
         ],
-      ),
-    );
-  }
-}
-
-class ReusableCard extends StatelessWidget {
-  final Color color;
-  final Widget child;
-  final Function tapCallback;
-
-  ReusableCard(
-      {this.color = const Color(0xFF1D1F31), this.child, this.tapCallback});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: tapCallback,
-      child: Container(
-        margin: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.all(
-            Radius.circular(12),
-          ),
-        ),
-        child: child,
       ),
     );
   }
