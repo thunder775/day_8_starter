@@ -31,8 +31,8 @@ class ResultPage extends StatelessWidget {
       remark = 'Go and hit the gym. Good Luck!';
       color = Colors.red;
     } else if (bmi < 39.9) {
-      categoryUpper = 'Obese';
-      category = 'Underweight';
+      categoryUpper = 'OBESE';
+      category = 'Obese';
       range = '29.9 - 39.9';
       remark = 'Go and hit the gym. Good Luck!';
       color = Colors.red;
